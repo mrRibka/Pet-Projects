@@ -18,14 +18,6 @@ public class Controller {
         this.studentService = studentService;
     }
 
-   /* @GetMapping("/students")
-    public String listStudents(Model model, @Param("keyword") String keyword){
-
-        model.addAttribute("students", studentService.getAllStudents(keyword));
-        model.addAttribute("keyword", keyword);
-        return "students";
-    }*/
-
     @GetMapping("/students/new")
     public String createStudentForm(Model model){
         Student student = new Student();
@@ -60,15 +52,22 @@ public class Controller {
     @GetMapping("/students/{pageNum}")
     public String viewPage(Model model,
                            @PathVariable(name = "pageNum") int pageNum,
-                           @Param("keyword") String keyword) {
+                           @Param("keyword") String keyword,
+                           @Param("sortField") String sortField,
+                           @Param("sortDir") String sortDir) {
 
-        Page<Student> page = studentService.listAll(pageNum, keyword);
+        Page<Student> page = studentService.listAll(pageNum, keyword, sortField, sortDir);
 
         List<Student> students = page.getContent();
 
         model.addAttribute("currentPage", pageNum);
         model.addAttribute("totalPages", page.getTotalPages());
         model.addAttribute("totalItems", page.getTotalElements());
+
+        model.addAttribute("sortField", sortField);
+        model.addAttribute("sortDir", sortDir);
+        model.addAttribute("reverseSortDir", sortDir.equals("asc") ? "desc" : "asc");
+
         model.addAttribute("students", students);
         model.addAttribute("keyword", keyword);
 
@@ -76,12 +75,12 @@ public class Controller {
     }
     @GetMapping("/students")
     public String viewHomePage(Model model) {
-        return viewPage(model, 1, null);
+        return viewPage(model, 1, null, "lastName", "asc");
     }
 
     @GetMapping("/students/search")
     public String viewSearch(Model model,
                                 @Param("keyword") String keyword) {
-        return viewPage(model, 1, keyword);
+        return viewPage(model, 1, keyword, "lastName", "asc");
     }
 }

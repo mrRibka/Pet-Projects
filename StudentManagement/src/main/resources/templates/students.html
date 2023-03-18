@@ -14,40 +14,42 @@
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" th:href="@{/students}">Home</a>
+                    <a class="nav-link active" th:href="@{/students}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" th:href="@{/students/new}">Add Student</a>
                 </li>
             </ul>
+            <form th:action="@{/students/1}" class="d-flex">
+                <input type="hidden" name="sortField" th:value="${sortField}">
+                <input type="hidden" name="sortDir" th:value="${sortDir}">
+                <input type="search"
+                       class="form-control me-2"
+                       name="keyword"
+                       placeholder="Search"
+                       th:value="${keyword}"
+                       required />
+                &nbsp;
+                <input type="submit" class="btn btn-outline-success" value="Search"/>
+                &nbsp;
+                <input type="button" value="Clear" class="btn btn-outline-secondary" onclick="clearFilter()" />
+            </form>
         </div>
     </div>
 </nav>
-<div class="container ">
-    <div class="row">
-        <div class="col-lg-3">
-            <a th:href="@{/students/new}" class="btn btn-primary btn-sm mb-3">Add Student</a>
-        </div>
+<div class="container">
+    <div class="row d-flex justify-content-center">
         <br>
-        <div>
-            <form th:action="@{/students/search}" class="d-flex justify-content-center">
-                <input type="text"
-                       name="keyword"
-                       th:value="${keyword}"
-                        required />
-                &nbsp;
-                <input type="submit" value="Search"/>
-                &nbsp;
-                <input type="button" value="Clear" onclick="clearFilter()" />
-            </form>
-        </div>
     </div>
     <table class="table">
         <thead>
         <tr>
-            <th scope="col">First Name</th>
-            <th scope="col"><a  th:href="@{/students/}">Last Name</a></th>
-            <th scope="col">Email</th>
-            <th scope="col">Year of Study</th>
+            <th scope="col"> <a th:href="@{'/students/' + ${currentPage} + '?sortField=firstName&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">First Name</a></th>
+            <th scope="col"><a th:href="@{'/students/' + ${currentPage} + '?sortField=lastName&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Last Name</a></th>
+            <th scope="col"><a th:href="@{'/students/' + ${currentPage} + '?sortField=email&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Email</a></th>
+            <th scope="col"><a th:href="@{'/students/' + ${currentPage} + '?sortField=yearOfStudy&sortDir=' + ${reverseSortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Year of Study</a></th>
             <th scope="col">Actions</th>
         </tr>
         </thead>
@@ -63,26 +65,27 @@
             </td>
         </tbody>
     </table>
-    Total Items: [[${totalItems}]]
-
-    <a th:if="${currentPage > 1}" th:href="@{/students/1}">First</a>
-    <span th:unless="${currentPage > 1}">First</span>
-
-    <a th:if="${currentPage > 1}" th:href="@{'/students/' + ${currentPage - 1}}">Previous</a>
-    <span th:unless="${currentPage > 1}">Previous</span>
-
-    <span th:each="i: ${#numbers.sequence(1, totalPages)}">
-        <a th:if="${currentPage != i}" th:href="@{'/students/' + ${i}}">[[${i}]]</a>
-        <span th:unless="${currentPage != i}">[[${i}]]</span>
+    <div class="d-flex justify-content-center">
+        Total Items: [[${totalItems}]].
+        &nbsp;&nbsp;
+        <a th:if="${currentPage > 1}" th:href="@{'/students/1' + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">First</a>
+        <span th:unless="${currentPage > 1}">First</span>
         &nbsp;
-    </span>
-
-    <a th:if="${currentPage < totalPages}" th:href="@{'/students/' + ${currentPage + 1}}">Next</a>
-    <span th:unless="${currentPage < totalPages}">Next</span>
-
-    <a th:if="${currentPage < totalPages}" th:href="@{'/students/' + ${totalPages}}">Last</a>
-    <span th:unless="${currentPage < totalPages}">Last</span>
-
+        <a th:if="${currentPage > 1}" th:href="@{'/students/' + ${currentPage - 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Previous</a>
+        <span th:unless="${currentPage > 1}">Previous</span>
+        &nbsp;
+        <span th:each="i: ${#numbers.sequence(1, totalPages)}">
+            <a th:if="${currentPage != i}" th:href="@{'/students/' + ${i} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">[[${i}]]</a>
+            <span th:unless="${currentPage != i}">[[${i}]]</span>
+            &nbsp;
+        </span>
+        &nbsp;
+        <a th:if="${currentPage < totalPages}" th:href="@{'/students/' + ${currentPage + 1} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Next</a>
+        <span th:unless="${currentPage < totalPages}">Next</span>
+        &nbsp;
+        <a th:if="${currentPage < totalPages}" th:href="@{'/students/' + ${totalPages} + '?sortField=' + ${sortField} + '&sortDir=' + ${sortDir} + ${keyword != null ? '&keyword=' + keyword : '' }}">Last</a>
+        <span th:unless="${currentPage < totalPages}">Last</span>
+    </div>
 </div>
 <script type="text/javascript">
     function clearFilter(){

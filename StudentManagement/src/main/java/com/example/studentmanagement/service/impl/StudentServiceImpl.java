@@ -6,6 +6,7 @@ import com.example.studentmanagement.service.StudentService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
@@ -34,11 +35,13 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public Page<Student> listAll(int pageNum, String keyword) {
+    public Page<Student> listAll(int pageNum, String keyword, String sortField, String sortDir) {
         int pageSize = 5;
 
-        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
-
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize,
+                sortDir.equals("asc") ? Sort.by(sortField).ascending()
+                        : Sort.by(sortField).descending()
+        );
         if (keyword != null){
             return studentRepository.findAll(pageable, keyword);
         }

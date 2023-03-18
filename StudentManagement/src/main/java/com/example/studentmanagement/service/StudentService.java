@@ -13,5 +13,5 @@ public interface StudentService{
 
     void deleteStudentById(Long id);
 
-    Page<Student> listAll( int pageNum, String keyword);
+    Page<Student> listAll( int pageNum, String keyword, String sortField, String sortDir );
 }
