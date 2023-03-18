@@ -1,11 +1,9 @@
 package com.example.studentmanagement.service;
 
 import com.example.studentmanagement.entity.Student;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface StudentService{
-    List<Student> getAllStudents();
 
     Student saveStudent(Student student);
 
@@ -13,7 +11,7 @@ public interface StudentService{
 
     Student updateStudent(Student student);
 
-    List<Student> getAllStudents(String keyword);
-
     void deleteStudentById(Long id);
+
+    Page<Student> listAll( int pageNum, String keyword);
 }

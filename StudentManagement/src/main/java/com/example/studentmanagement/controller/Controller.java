@@ -2,14 +2,11 @@ package com.example.studentmanagement.controller;
 
 import com.example.studentmanagement.entity.Student;
 import com.example.studentmanagement.service.StudentService;
+import org.springframework.data.domain.Page;
 import org.springframework.data.repository.query.Param;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 
 @org.springframework.stereotype.Controller
@@ -21,13 +18,13 @@ public class Controller {
         this.studentService = studentService;
     }
 
-    @GetMapping("/students")
+   /* @GetMapping("/students")
     public String listStudents(Model model, @Param("keyword") String keyword){
 
         model.addAttribute("students", studentService.getAllStudents(keyword));
         model.addAttribute("keyword", keyword);
         return "students";
-    }
+    }*/
 
     @GetMapping("/students/new")
     public String createStudentForm(Model model){
@@ -48,15 +45,43 @@ public class Controller {
         model.addAttribute("student", student);
         return "edit_student";
     }
-    @PostMapping("/students/{id}")
+    @PostMapping("/students/update/{id}")
     public String addUpdate(@ModelAttribute("student") Student student){
         studentService.updateStudent(student);
         return "redirect:/students";
     }
 
-    @GetMapping("/students/{id}")
+    @GetMapping("/students/delete/{id}")
     public String deleteStudent(@PathVariable Long id){
         studentService.deleteStudentById(id);
         return "redirect:/students";
+    }
+
+    @GetMapping("/students/{pageNum}")
+    public String viewPage(Model model,
+                           @PathVariable(name = "pageNum") int pageNum,
+                           @Param("keyword") String keyword) {
+
+        Page<Student> page = studentService.listAll(pageNum, keyword);
+
+        List<Student> students = page.getContent();
+
+        model.addAttribute("currentPage", pageNum);
+        model.addAttribute("totalPages", page.getTotalPages());
+        model.addAttribute("totalItems", page.getTotalElements());
+        model.addAttribute("students", students);
+        model.addAttribute("keyword", keyword);
+
+        return "students";
+    }
+    @GetMapping("/students")
+    public String viewHomePage(Model model) {
+        return viewPage(model, 1, null);
+    }
+
+    @GetMapping("/students/search")
+    public String viewSearch(Model model,
+                                @Param("keyword") String keyword) {
+        return viewPage(model, 1, keyword);
     }
 }

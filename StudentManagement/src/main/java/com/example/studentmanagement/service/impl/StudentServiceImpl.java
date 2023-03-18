@@ -3,10 +3,11 @@ package com.example.studentmanagement.service.impl;
 import com.example.studentmanagement.entity.Student;
 import com.example.studentmanagement.repository.StudentRepository;
 import com.example.studentmanagement.service.StudentService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class StudentServiceImpl implements StudentService {
@@ -15,11 +16,6 @@ public class StudentServiceImpl implements StudentService {
 
     public StudentServiceImpl(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
-    }
-
-    @Override
-    public List<Student> getAllStudents() {
-        return studentRepository.findAll();
     }
 
     @Override
@@ -37,13 +33,16 @@ public class StudentServiceImpl implements StudentService {
         return studentRepository.save(student);
     }
 
-
     @Override
-    public List<Student> getAllStudents(String keyword) {
+    public Page<Student> listAll(int pageNum, String keyword) {
+        int pageSize = 5;
+
+        Pageable pageable = PageRequest.of(pageNum - 1, pageSize);
+
         if (keyword != null){
-            return studentRepository.findAllByLastName(keyword);
+            return studentRepository.findAll(pageable, keyword);
         }
-        return studentRepository.findAll();
+        return studentRepository.findAll(pageable);
     }
 
     @Override
